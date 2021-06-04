@@ -1,9 +1,8 @@
+import sys
 from dataclasses import dataclass
 from datetime import datetime
-import sys
 
-from schedule import clear
-from tomato_blocks import convert_date, clear_screen
+from tomato_blocks import clear_screen, convert_date
 
 
 @dataclass
