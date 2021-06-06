@@ -1,6 +1,7 @@
 import sys
 from dataclasses import dataclass
 from datetime import datetime
+from typing import Type
 
 from tomato_blocks import clear_screen, convert_date
 
@@ -160,14 +161,22 @@ all_time_blocks = monday_blocks \
     + sunday_blocks
 
 
-def print_schedule(daily_schedules, today=None):
-    if today:
-        print('-' * 20)
-        print(today)
-        print('-' * 20)
-        for item in daily_schedules.get(today):
-            print(f'{convert_date(item[0])}  {item[1]}')
-        print()
+def print_schedule(daily_schedules, day=None):
+    if day:
+        day = day.capitalize()
+        if day == 'Today':
+            day = datetime.today().strftime("%A")
+        try:
+            schedule = daily_schedules[day]        
+            print()
+            print('-' * 20)
+            print(f'{day}')
+            print('-' * 20)
+            for item in schedule:
+                print(f'{convert_date(item[0])}  {item[1]}')
+            print()
+        except KeyError:
+            print('Please enter a valid day of the week or today')
     else:
         print()
         print('-' * 20)
@@ -187,7 +196,7 @@ if __name__ == '__main__':
         clear_screen()
         print_schedule(daily_schedules)
 
-    elif sys.argv[1] == '--today':
+    else:
+        day = sys.argv[1]
         clear_screen()
-        today = datetime.today().strftime("%A")
-        print_schedule(daily_schedules, today=today)
+        print_schedule(daily_schedules, day)
