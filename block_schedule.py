@@ -1,7 +1,6 @@
 import sys
 from dataclasses import dataclass
 from datetime import datetime
-from typing import Type
 
 from tomato_blocks import clear_screen, convert_date
 
@@ -57,63 +56,60 @@ wednesday_schedule = [
 ]
 
 thursday_schedule = [
-    ('06:00', 'Breakfast', 50),
-    ('07:00', 'Yoga', 50),
-    ('08:00', 'Book', 50),
-    ('09:00', 'SQL', 50),
+    ('08:00', 'Breakfast', 50),
+    ('09:00', 'Yoga', 50),
     ('10:00', 'Book', 50),
     ('11:00', 'SQL', 50),
     ('12:00', 'Lunch', 50),
     ('13:00', 'Misc', 50),
     ('14:00', 'Project', 50),
     ('15:00', 'Project', 50),
-    ('16:00', 'Project', 50),
-    ('17:00', 'Project', 50),
+    ('16:00', 'Book', 50),
+    ('17:00', 'SQL', 50),
     ('18:00', 'Dinner', 50),
     ('19:00', 'Social', 50),
     ('20:00', 'Special', 50),
-    ('21:00', 'Play', 50),
-    ('22:00', 'Bed', 50),
+    ('21:00', 'Project', 50),
+    ('22:00', 'Project', 50),
+    ('23:00', 'Play', 50),
 ]
 
 friday_schedule = [
-    ('06:00', 'Breakfast', 50),
-    ('07:00', 'Yoga', 50),
-    ('08:00', 'Book', 50),
-    ('09:00', 'SQL', 50),
+    ('08:00', 'Breakfast', 50),
+    ('09:00', 'Yoga', 50),
     ('10:00', 'Book', 50),
     ('11:00', 'SQL', 50),
     ('12:00', 'Lunch', 50),
     ('13:00', 'Gym', 50),
     ('14:00', 'Gym', 50),
-    ('15:00', 'Class', 50),
-    ('16:00', 'Class', 50),
-    ('17:00', 'Special', 50),
-    ('18:00', 'Dinner', 50),
-    ('19:00', 'Project', 50),
-    ('20:00', 'Project', 50),
-    ('21:00', 'Play', 50),
-    ('22:00', 'Bed', 50),
+    ('15:00', 'Book', 50),
+    ('16:00', 'SQL', 50),
+    ('17:00', 'Class', 50),
+    ('18:00', 'Class', 50),
+    ('19:00', 'Special', 50),
+    ('20:00', 'Dinner', 50),
+    ('21:00', 'Project', 50),
+    ('22:00', 'Project', 50),
+    ('23:00', 'Play', 50),
 ]
 
 saturday_schedule = [
-    ('06:00', 'Breakfast', 50),
-    ('07:00', 'Yoga', 50),
-    ('08:00', 'Project', 50),
-    ('09:00', 'Project', 50),
+    ('08:00', 'Breakfast', 50),
+    ('09:00', 'Yoga', 50),
     ('10:00', 'Project', 50),
     ('11:00', 'Project', 50),
     ('12:00', 'Lunch', 50),
     ('13:00', 'Misc', 50),
     ('14:00', 'Book', 50),
     ('15:00', 'SQL', 50),
-    ('16:00', 'Book', 50),
-    ('17:00', 'SQL', 50),
+    ('16:00', 'Project', 50),
+    ('17:00', 'Project', 50),
     ('18:00', 'Dinner', 50),
-    ('19:00', 'Social', 50),
-    ('20:00', 'Special', 50),
-    ('21:00', 'Play', 50),
-    ('22:00', 'Bed', 50),
+    ('19:00', 'Book', 50),
+    ('20:00', 'SQL', 50),
+    ('21:00', 'Social', 50),
+    ('22:00', 'Special', 50),
+    ('23:00', 'Play', 50),
 ]
 
 sunday_schedule = [
@@ -167,7 +163,7 @@ def print_schedule(daily_schedules, day=None):
         if day == 'Today':
             day = datetime.today().strftime("%A")
         try:
-            schedule = daily_schedules[day]        
+            schedule = daily_schedules[day]
             print()
             print('-' * 20)
             print(f'{day}')
