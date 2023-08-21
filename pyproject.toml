@@ -14,6 +14,7 @@ tomato = "tomato_blocks.main:app"
 python = "^3.10"
 schedule = "^1.2.0"
 typer = "^0.7.0"
+rich = "^13.5.2"
 
 
 [build-system]
