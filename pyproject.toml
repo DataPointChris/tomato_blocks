@@ -1,0 +1,21 @@
+[tool.poetry]
+name = "tomato-blocks"
+version = "1.0.0"
+description = "Tomato timer"
+authors = ["Chris Birch <datapointchris@gmail.com>"]
+license = "MIT"
+readme = "README.md"
+packages = [{include = "tomato_blocks"}]
+
+[tool.poetry.scripts]
+tomato = "tomato_blocks.main:app"
+
+[tool.poetry.dependencies]
+python = "^3.10"
+schedule = "^1.2.0"
+typer = "^0.7.0"
+
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"

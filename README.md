@@ -1,6 +1,4 @@
 # 🍅 Tomato Blocks 🍅
----
 
-Simple, pretty program to help with blocking time and keeping a productive schedule.
+## Overview
 
-WIP, along with the README.
