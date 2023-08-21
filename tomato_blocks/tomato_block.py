@@ -13,7 +13,7 @@ class TomatoBlock:
         break_title: str = '',
         break_minutes: int = 0,
         break_msg: str = '',
-        max_width: int = 60,
+        max_width: int = 80,
     ):
         self.title = f'{datetime.now().strftime("%A %D %I:%M%p")} {title}'
         self.duration = duration
@@ -74,10 +74,10 @@ class TomatoBlock:
         subprocess.call(clear, shell=True)
 
     def run(self):
-        self._notify(self.title, self.notes)
         self._print_title()
         self._tomato_timer(self.duration)
+        self._notify(self.title, self.notes)
         if self.break_minutes > 0:
-            self._notify(self.break_title, self.break_msg)
             self._print_title(is_break=True)
             self._tomato_timer(self.break_minutes)
+            self._notify(self.break_title, self.break_msg)
