@@ -38,7 +38,6 @@ def update():
     os.chdir(BASE_DIR)
 
     print('[green]Building new wheel...[/green]')
-    subprocess.call('deactivate', shell=True, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
     subprocess.call('poetry build', shell=True)
 
     wheel_path = next(BASE_DIR.joinpath('dist').glob('*.whl'))
