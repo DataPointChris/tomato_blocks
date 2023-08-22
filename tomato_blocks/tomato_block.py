@@ -7,8 +7,8 @@ from datetime import datetime
 class TomatoBlock:
     def __init__(
         self,
-        title: str = 'Tomato Block',
-        duration: int = 25,
+        title: str,
+        duration: int = 20,
         notes: str = '',
         break_title: str = '',
         break_minutes: int = 0,
@@ -58,7 +58,7 @@ class TomatoBlock:
         space = self.max_width - len(self.title) - 10
         left_pad = ('⎼' * (space // 2)) + (' ' * 5)
         right_pad = (' ' * 5) + ('⎼' * (space // 2))
-        title = f'{left_pad}{self.title.upper()}{right_pad}'
+        title = f'{left_pad}{self.title}{right_pad}'
         if not is_break:
             self._clear_screen()
             top_border = '⎺' * len(title)
