@@ -25,9 +25,9 @@ class TomatoBlock:
         self.max_width = max_width
 
     def _tomato_timer(self, minutes: int) -> None:
-        start_time = time.perf_counter()
+        start_time = time.time()
         while True:
-            elapsed_seconds = int(round(time.perf_counter() - start_time))
+            elapsed_seconds = int(round(time.time() - start_time))
             remaining_seconds = minutes * 60 - elapsed_seconds
             countdown = f"{int(remaining_seconds / 60):02}:{int(remaining_seconds % 60):02} ⏰"
             duration = (self.max_width - 16) // 2
