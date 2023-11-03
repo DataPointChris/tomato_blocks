@@ -4,4 +4,7 @@
 2. Set up pre-commit hooks, borrow from ichrisbirch
 3. Put a pre-commit hook in templates
 4. Figure out something to do with templates, standards, reference. (blue book or mkdocs)
-5. 
+5. Update SQLALCHEMY
+6. Update SQLAlchemy syntax to new select
+7. Change session to be a generator used in a with block
+8. Does sqlalchemy handle connection pooling?
