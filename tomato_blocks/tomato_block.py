@@ -6,8 +6,8 @@ from datetime import datetime
 
 
 class TomatoBlock:
-    def __init__(self, title: str, duration: int = 50, max_width: int = 80):
-        self.title = f'{datetime.now().strftime("%A %D %I:%M%p")} {title}'
+    def __init__(self, title: str, duration: int = 1, max_width: int = 80):
+        self.title = f"{datetime.now().strftime('%A %D %I:%M%p')} {title}"
         self.duration = duration
         self.max_width = max_width
 
@@ -28,39 +28,36 @@ class TomatoBlock:
     def _progressbar(self, curr: int, total: int, duration: int, extra: str = ''):
         frac = curr / total
         filled = round(frac * duration)
-        print(f'\r{"🍅" * filled}{"--" * (duration - filled)}[ {frac:.0%} ]{extra}', end='')
+        print(f'\r{"🍅" * filled}{"--" * (duration - filled)} [ {frac:.0%} ] {extra}', end='')
 
     def _notify(self, message: str):
         """
         # macos desktop notification
         terminal-notifier -> https://github.com/julienXX/terminal-notifier#download
         """
-        with contextlib.suppress(Exception):
+        with contextlib.suppress(Exception):  # pass if terminal-notifier is not installed
             subprocess.run(['terminal-notifier', '-title', 'Tomato Blocks', '-message', message])
 
     def _print_title(self):
-        space = self.max_width - len(self.title) - 10
-        left_pad = ('⎼' * (space // 2)) + (' ' * 5)
-        right_pad = (' ' * 5) + ('⎼' * (space // 2))
-        title = f'{left_pad}{self.title}{right_pad}'
-        self._clear_screen()
-        print(title)
-
-        title = f'{left_pad}{self.title}{right_pad}'
-        self._clear_screen()
-        top_border = '⎺' * len(title)
-        bottom_border = '⎽' * len(title)
+        pad_size = 5
+        space = self.max_width - len(self.title) - (pad_size * 2)
+        left_pad = ('⎼' * (space // 2)) + (' ' * pad_size)
+        right_pad = (' ' * pad_size) + ('⎼' * (space // 2))
+        padded_title = f'{left_pad}{self.title}{right_pad}'
+        top_border = '⎺' * len(padded_title)
+        bottom_border = '⎽' * len(padded_title)
         print()
         print(top_border)
-        print(title)
+        print(padded_title)
         print(bottom_border)
-        print('\n\n')
+        print()
 
     def _clear_screen(self):
         clear = 'cls' if os.name == 'nt' else 'clear'
         subprocess.call(clear, shell=True)
 
     def run(self):
+        self._clear_screen()
         self._print_title()
         self._tomato_timer(self.duration)
         self._notify(f'{self.title} Completed')
