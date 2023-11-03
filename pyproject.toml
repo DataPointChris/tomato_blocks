@@ -56,10 +56,15 @@ disable = ["FURB109"]
 line-length = 120
 ignore = []
 
+[tool.ruff.format]
+quote-style = "single"
+indent-style = "tab"
+
 [tool.ruff.lint]
 # isort, refurb, pyupgrade, prefer pathlib
 extend-select = ["I", "FURB", "UP", "PTH"]
 preview = true
+
 
 [tool.ruff.per-file-ignores]
 "__init__.py" = ["F401"]
