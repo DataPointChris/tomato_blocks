@@ -58,7 +58,6 @@ ignore = []
 
 [tool.ruff.format]
 quote-style = "single"
-indent-style = "tab"
 
 [tool.ruff.lint]
 # isort, refurb, pyupgrade, prefer pathlib
