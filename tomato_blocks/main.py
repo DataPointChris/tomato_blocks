@@ -5,13 +5,13 @@ import subprocess
 import sys
 import time
 import uuid
-from datetime import datetime
+from datetime import datetime, timedelta
 
 import schedule
 import typer
 from rich import print
-from sqlalchemy import Column, DateTime, Integer, String, create_engine, func
-from sqlalchemy.orm import Session, declarative_base
+from sqlalchemy import Date, DateTime, Integer, String, create_engine, func, select
+from sqlalchemy.orm import DeclarativeBase, Mapped, Session, mapped_column
 from tabulate import tabulate
 
 from .tomato_block import TomatoBlock
@@ -21,7 +21,6 @@ BASE_DIR = pathlib.Path().home().joinpath('code', 'projects', 'python', 'tomato-
 EXIT_MESSAGE = '\n\nTimer Cancelled'
 SQLITE_DB = 'tomato.db'
 DEFAULT_DURATION = 50
-MAX_WIDTH = 80
 
 logger = logging.getLogger(__name__)
 formatter = logging.Formatter('%(message)s')
@@ -35,18 +34,20 @@ app = typer.Typer()
 
 engine = create_engine('postgresql://localhost/tomato')
 
-Base = declarative_base()
+
+class Base(DeclarativeBase):
+    pass
 
 
-class Tomato(Base):  # type: ignore
+class Tomato(Base):
     __tablename__ = 'tomato'
 
-    id = Column(Integer, primary_key=True)
-    uuid = Column(String, default=uuid.uuid4)
-    title = Column(String)
-    started_at = Column(DateTime, nullable=True)
-    completed_at = Column(DateTime, nullable=True)
-    cancelled_at = Column(DateTime, nullable=True)
+    id: Mapped[int] = mapped_column(Integer, primary_key=True)
+    uuid: Mapped[str] = mapped_column(String, default=uuid.uuid4)
+    title: Mapped[str] = mapped_column(String)
+    started_at: Mapped[datetime] = mapped_column(DateTime, nullable=True)
+    completed_at: Mapped[datetime] = mapped_column(DateTime, nullable=True)
+    cancelled_at: Mapped[datetime] = mapped_column(DateTime, nullable=True)
 
 
 Base.metadata.create_all(engine)
@@ -69,7 +70,7 @@ def timer(title):
             tomato.cancelled_at = datetime.now()
             session.add(tomato)
             session.commit()
-            print(EXIT_MESSAGE)
+            print(f'[red]{EXIT_MESSAGE}[/red]')
             sys.exit(0)
 
 
@@ -92,53 +93,54 @@ def update():
 @app.command()
 def daily():
     with Session(engine) as session:
-        rows = (
-            session.query(
-                # func.extract('date', Tomato.started_at).label('date'),
+        rows = session.execute(
+            select(
                 func.date(Tomato.started_at).label('date'),
-                func.count(Tomato.started_at).label('started'),
-                func.count(Tomato.completed_at).label('completed'),
-                func.count(Tomato.cancelled_at).label('cancelled'),
+                func.count(Tomato.started_at),
+                func.count(Tomato.completed_at),
+                func.count(Tomato.cancelled_at),
             )
-            .group_by(func.date(Tomato.started_at))
-            .order_by(func.date(Tomato.started_at))
-            .all()
+            .group_by('date')
+            .order_by('date')
         )
         print('[green]Daily Summary[/green]')
-        print(tabulate(rows, headers=['Date', 'Started', 'Completed', 'Interrupted']))
+        print(tabulate(rows, headers=['Date', 'Started', 'Completed', 'Cancelled']))
 
 
 @app.command()
 def weekly():
     with Session(engine) as session:
-        rows = (
-            session.query(
-                func.extract('week', Tomato.started_at).label('week'),
-                func.count(Tomato.started_at).label('started'),
-                func.count(Tomato.completed_at).label('completed'),
-                func.count(Tomato.cancelled_at).label('cancelled'),
+        week_start_string = func.cast(func.cast(func.date_trunc('week', Tomato.started_at), Date), String)
+        week_end_string = func.cast(
+            func.cast(func.date_trunc('week', Tomato.started_at) + timedelta(days=6), Date), String
+        )
+        week_range_string = week_start_string + ' - ' + week_end_string
+        rows = session.execute(
+            select(
+                week_range_string.label('week'),
+                func.count(Tomato.started_at),
+                func.count(Tomato.completed_at),
+                func.count(Tomato.cancelled_at),
             )
-            .group_by(func.extract('week', Tomato.started_at))
-            .order_by(func.extract('week', Tomato.started_at))
-            .all()
+            .group_by('week')
+            .order_by('week')
         )
         print('[green]Weekly Summary[/green]')
-        print(tabulate(rows, headers=['Week', 'Started', 'Completed', 'Interrupted']))
+        print(tabulate(rows, headers=['Week', 'Started', 'Completed', 'Cancelled']))
 
 
 @app.command()
 def categories():
     with Session(engine) as session:
-        rows = (
-            session.query(
+        rows = session.execute(
+            select(
                 Tomato.title,
-                func.count(Tomato.started_at).label('started'),
-                func.count(Tomato.completed_at).label('completed'),
-                func.count(Tomato.cancelled_at).label('cancelled'),
+                func.count(Tomato.started_at),
+                func.count(Tomato.completed_at),
+                func.count(Tomato.cancelled_at),
             )
             .group_by(Tomato.title)
             .order_by(func.count(Tomato.started_at).desc())
-            .all()
         )
         print('[green]Categories Summary[/green]')
         print(tabulate(rows, headers=['Category', 'Started', 'Completed', 'Interrupted']))

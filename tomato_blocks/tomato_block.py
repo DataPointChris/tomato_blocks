@@ -6,29 +6,28 @@ from datetime import datetime
 
 
 class TomatoBlock:
-    def __init__(self, title: str, duration: int = 1, max_width: int = 80):
-        self.title = f"{datetime.now().strftime('%A %D %I:%M%p')} {title}"
+    def __init__(self, title: str, duration: int = 50, max_width: int = int(os.get_terminal_size().columns * 0.9)):
+        self.title = f"{datetime.now().strftime('%A %D %I:%M%p')} - {title}"
         self.duration = duration
         self.max_width = max_width
 
-    def _tomato_timer(self, minutes: int) -> None:
+    def _tomato_timer(self) -> None:
         start_time = time.time()
+        total_seconds = self.duration * 60
+        bar_width = (self.max_width - 16) // 2
         while True:
-            elapsed_seconds = int(round(time.time() - start_time))
-            remaining_seconds = minutes * 60 - elapsed_seconds
+            elapsed_seconds = int(time.time() - start_time)
+            remaining_seconds = total_seconds - elapsed_seconds
+            pct_complete = elapsed_seconds / total_seconds
             countdown = f'{int(remaining_seconds / 60):02}:{int(remaining_seconds % 60):02} ⏰'
-            duration = (self.max_width - 16) // 2
-            self._progressbar(elapsed_seconds, minutes * 60, duration, countdown)
+            filled = int(pct_complete * bar_width)
+            progress_bar = f'\r{"🍅" * filled}{"--" * (bar_width - filled)} [ {pct_complete:.0%} ] {countdown}'
+            print(progress_bar, end='')
 
             if remaining_seconds <= 0:
                 print()
                 break
             time.sleep(1)
-
-    def _progressbar(self, curr: int, total: int, duration: int, extra: str = ''):
-        frac = curr / total
-        filled = round(frac * duration)
-        print(f'\r{"🍅" * filled}{"--" * (duration - filled)} [ {frac:.0%} ] {extra}', end='')
 
     def _notify(self, message: str):
         """
@@ -59,5 +58,5 @@ class TomatoBlock:
     def run(self):
         self._clear_screen()
         self._print_title()
-        self._tomato_timer(self.duration)
+        self._tomato_timer()
         self._notify(f'{self.title} Completed')
