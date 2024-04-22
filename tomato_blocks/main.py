@@ -76,18 +76,32 @@ def timer(title):
 
 @app.command()
 def update():
-    print('[blue]Updating tomato-blocks...[/blue]')
-    print(BASE_DIR)
-    os.chdir(BASE_DIR)
+    print('[blue]Updating tomato blocks...[/blue]')
+    logger.info('Updating tomato blocks')
+    script_location = pathlib.Path().home().joinpath('code/python/tomato-blocks')
+    print(script_location)
+    logger.info(f'Script location: {script_location}')
+    os.chdir(script_location)
 
     print('[green]Building new wheel...[/green]')
-    subprocess.call('poetry build', shell=True)
+    logger.info('Building new wheel')
+    build_command = 'poetry build --format=wheel'
+    logger.info(f'Build command: {build_command}')
+    subprocess.call(build_command, shell=True)
 
-    wheel_path = next(BASE_DIR.joinpath('dist').glob('*.whl'))
     print('[green]Installing new wheel...[/green]')
-    print(f'[green]{wheel_path.name}[/green]')
-    subprocess.call(f'pip install --quiet --user {wheel_path} --force-reinstall', shell=True)
+    logger.info('Installing new wheel')
+    wheels = script_location.joinpath('dist').glob('*.whl')
+    latest_wheel = sorted(wheels)[-1]
+
+    print(latest_wheel)
+    logger.info(f'Latest wheel: {latest_wheel}')
+    # pipx upgrade does not work, instead force install
+    install_command = f'pipx install --force {latest_wheel}'
+    logger.info(f'Install command: {install_command}')
+    subprocess.call(install_command, shell=True)
     print('[green]Done![/green]')
+    logger.info('Completed update')
 
 
 @app.command()
